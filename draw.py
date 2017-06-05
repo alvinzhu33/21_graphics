@@ -3,6 +3,49 @@ from matrix import *
 from math import *
 from gmath import *
 
+def scanline(verts, screen, color):
+    bot = [verts[0], verts[1]];
+    mid = [verts[2], verts[3]];
+    top = [verts[4], verts[5]];
+
+    if mid[1] < bot[1]:
+        temp = bot;
+        bot = mid;
+        mid = temp;
+    if top[1] < bot[1]:
+        temp = bot;
+        bot = top;
+        top = temp;
+    if top[1] < mid[1]:
+        temp = mid;
+        mid = top;
+        top = temp;
+
+    y = bot[1];
+    L = bot[0];
+    R = bot[0];
+    
+    dxL = 0;
+    if top[1] != bot[1]:
+        dxL = (top[0] - bot[0])/(top[1] - bot[1]);
+    dxR0 = 0;
+    if mid[1] != bot[1]:
+        dxR0 = (mid[0] - bot[0])/(mid[1] - bot[1]);
+    dxR1 = 0;
+    if top[1] != mid[1]:
+        dxR1 = (top[0] - mid[0])/(top[1] - mid[1]);
+
+    while y <= int(mid[1]):
+        draw_line(int(L), int(y), int(R), int(y), screen, color);
+        R += dxR0;
+        L += dxL;
+        y += 1.0;
+    R = mid[0];
+    while y <= int(top[1]):
+        draw_line(int(L), int(y), int(R), int(y), screen, color);
+        R += dxR1;
+        L += dxL;
+        y += 1.0;
 
 def scanline_convert(polygons, i, screen, zbuffer):
     pass
@@ -25,27 +68,14 @@ def draw_polygons( matrix, screen, zbuffer, color ):
         #print normal
         if normal[2] > 0:
             #scanline_convert(matrix, point, screen, zbuffer)            
-            draw_line( int(matrix[point][0]),
-                       int(matrix[point][1]),
-                       matrix[point][2],
-                       int(matrix[point+1][0]),
-                       int(matrix[point+1][1]),
-                       matrix[point+1][2],
-                       screen, zbuffer, color)
-            draw_line( int(matrix[point+2][0]),
-                       int(matrix[point+2][1]),
-                       matrix[point+2][2],
-                       int(matrix[point+1][0]),
-                       int(matrix[point+1][1]),
-                       matrix[point+1][2],
-                       screen, zbuffer, color)
-            draw_line( int(matrix[point][0]),
-                       int(matrix[point][1]),
-                       matrix[point][2],
-                       int(matrix[point+2][0]),
-                       int(matrix[point+2][1]),
-                       matrix[point+2][2],
-                       screen, zbuffer, color)    
+            verts = [matrix[point][0], matrix[point][1],
+                     matrix[point+1][0], matrix[point+1][1],
+                     matrix[point+2][0], matrix[point+2][1]];
+            red = (point * 3) % 255;
+            green = (point * 11) % 255;
+            blue = (point * 17) % 255;
+            color = [red, green, blue]
+            scanline(verts, screen, color);
         point+= 3
 
 
