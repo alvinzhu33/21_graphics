@@ -3,10 +3,15 @@ from matrix import *
 from math import *
 from gmath import *
 
-def scanline(verts, screen, color):
-    bot = [verts[0], verts[1]];
-    mid = [verts[2], verts[3]];
-    top = [verts[4], verts[5]];
+def scanline_convert(polygons, i, screen, zbuffer):
+    red = (i * 3) % 255;
+    green = (i * 11) % 255;
+    blue = (i * 17) % 255;
+    color = [red, green, blue]
+
+    bot = [polygons[i][0], polygons[i][1], polygons[i][2]];
+    mid = [polygons[i+1][0], polygons[i+1][1], polygons[i+1][2]];
+    top = [polygons[i+2][0], polygons[i+2][1], polygons[i+2][2]];
 
     if mid[1] < bot[1]:
         temp = bot;
@@ -25,30 +30,21 @@ def scanline(verts, screen, color):
     L = bot[0];
     R = bot[0];
     
-    dxL = 0;
-    if top[1] != bot[1]:
-        dxL = (top[0] - bot[0])/(top[1] - bot[1]);
-    dxR0 = 0;
-    if mid[1] != bot[1]:
-        dxR0 = (mid[0] - bot[0])/(mid[1] - bot[1]);
-    dxR1 = 0;
-    if top[1] != mid[1]:
-        dxR1 = (top[0] - mid[0])/(top[1] - mid[1]);
+    dxL = (top[0] - bot[0])/(top[1] - bot[1]) if top[1] != bot[1] else 0;
+    dxR0 = (mid[0] - bot[0])/(mid[1] - bot[1]) if mid[1] != bot[1] else 0;
+    dxR1 = (top[0] - mid[0])/(top[1] - mid[1]) if top[1] != mid[1] else 0;
 
     while y <= int(mid[1]):
-        draw_line(int(L), int(y), int(R), int(y), screen, color);
+        draw_line(int(L), int(y), int(bot[2]), int(R), int(y), int(top[2]), screen, zbuffer, color);
         R += dxR0;
         L += dxL;
         y += 1.0;
     R = mid[0];
     while y <= int(top[1]):
-        draw_line(int(L), int(y), int(R), int(y), screen, color);
+        draw_line(int(L), int(y), int(bot[2]), int(R), int(y), int(top[2]), screen, zbuffer, color);
         R += dxR1;
         L += dxL;
         y += 1.0;
-
-def scanline_convert(polygons, i, screen, zbuffer):
-    pass
 
 
 def add_polygon( polygons, x0, y0, z0, x1, y1, z1, x2, y2, z2 ):
@@ -67,15 +63,9 @@ def draw_polygons( matrix, screen, zbuffer, color ):
         normal = calculate_normal(matrix, point)[:]
         #print normal
         if normal[2] > 0:
-            #scanline_convert(matrix, point, screen, zbuffer)            
-            verts = [matrix[point][0], matrix[point][1],
-                     matrix[point+1][0], matrix[point+1][1],
-                     matrix[point+2][0], matrix[point+2][1]];
-            red = (point * 3) % 255;
-            green = (point * 11) % 255;
-            blue = (point * 17) % 255;
-            color = [red, green, blue]
-            scanline(verts, screen, color);
+            scanline_convert(matrix, point, screen, zbuffer)            
+            
+            #scanline(verts, screen, color);
         point+= 3
 
 
@@ -355,6 +345,7 @@ def draw_line( x0, y0, z0, x1, y1, z1, screen, zbuffer, color ):
             x+= dx_east
             y+= dy_east
             d+= d_east
+        z += dz;
         loop_start+= 1
 
     plot( screen, zbuffer, color, x, y, z )
