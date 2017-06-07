@@ -29,26 +29,33 @@ def scanline_convert(polygons, i, screen, zbuffer):
     y = bot[1];
     L = bot[0];
     R = bot[0];
+    zL = bot[2];
+    zR = bot[2];
     
     dxL = (top[0] - bot[0])/(top[1] - bot[1]) if top[1] != bot[1] else 0;
     dxR0 = (mid[0] - bot[0])/(mid[1] - bot[1]) if mid[1] != bot[1] else 0;
     dxR1 = (top[0] - mid[0])/(top[1] - mid[1]) if top[1] != mid[1] else 0;
-    dz = (top[2] - bot[2])/(top[1] - bot[1]) if top[1] != bot[1] else 0;
+    dzL = (top[2] - bot[2])/(top[1] - bot[1]) if top[1] != bot[1] else 0;
+    dzR0 = (mid[2] - bot[2])/(mid[1] - bot[1]) if mid[1] != bot[1] else 0;
+    dzR1 = (top[2] - mid[2])/(top[1] - mid[1]) if top[1] != mid[1] else 0;
 
+    
     while y <= int(mid[1]):
-        draw_line(int(L), int(y), int(z), int(R), int(y), int(z), screen, zbuffer, color);
+        draw_line(int(L), int(y), int(zL), int(R), int(y), int(zR), screen, zbuffer, color);
         R += dxR0;
         L += dxL;
         y += 1.0;
-        z += dz;
+        zL += dzL;
+        zR += dzR0;
     R = mid[0];
-    z = mid[2];
+    zR = mid[2];
     while y <= int(top[1]):
-        draw_line(int(L), int(y), int(z), int(R), int(y), int(z), screen, zbuffer, color);
+        draw_line(int(L), int(y), int(zL), int(R), int(y), int(zR), screen, zbuffer, color);
         R += dxR1;
         L += dxL;
         y += 1.0;
-        z += dz;
+        zL += dzL;
+        zR += dzR1;
 
 
 def add_polygon( polygons, x0, y0, z0, x1, y1, z1, x2, y2, z2 ):
