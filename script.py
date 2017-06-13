@@ -120,7 +120,7 @@ def run(filename):
     step = 0.1
 
     #print symbols
-    sources = [symbols[i][1] for i in symbols if symbols[i][0] = "light"]
+    sources = [symbols[i][1] for i in symbols if symbols[i][0] == "light"]
     if "shading" in symbols:
         shading = symbols["shading"][1];
 
@@ -155,22 +155,25 @@ def run(filename):
                         symbols[knob][1] = args[0]
             elif c == 'box':
                 add_box(tmp,
-                        args[0], args[1], args[2],
-                        args[3], args[4], args[5])
+                        args[0+1], args[1+1], args[2+1],
+                        args[3+1], args[4+1], args[5+1])
+                color = args[0]
                 matrix_mult( stack[-1], tmp )
-                draw_polygons(tmp, screen, zb, color, symbols[command[-1]][1], sources, shading)
+                draw_polygons(tmp, screen, zb, color, symbols[command[-1]][1], sources, shading) if command[-1] else draw_polygons(tmp, screen, zb, color);
                 tmp = []
             elif c == 'sphere':
                 add_sphere(tmp,
-                           args[0], args[1], args[2], args[3], step)
+                           args[0+1], args[1+1], args[2+1], args[3+1], step)
+                color = args[0]
                 matrix_mult( stack[-1], tmp )
-                draw_polygons(tmp, screen, zb, color, symbols[command[-1]][1], sources, shading)
+                draw_polygons(tmp, screen, zb, color, symbols[command[-1]][1], sources, shading) if command[-1] else draw_polygons(tmp, screen, zb, color);
                 tmp = []
             elif c == 'torus':
                 add_torus(tmp,
-                          args[0], args[1], args[2], args[3], args[4], step)
+                          args[0+1], args[1+1], args[2+1], args[3+1], args[4+1], step)
+                color = args[0]
                 matrix_mult( stack[-1], tmp )
-                draw_polygons(tmp, screen, zb, color, symbols[command[-1]][1], sources, shading)
+                draw_polygons(tmp, screen, zb, color, symbols[command[-1]][1], sources, shading) if command[-1] else draw_polygons(tmp, screen, zb, color);
                 tmp = []
             elif c == 'move':
                 if command[-1]:

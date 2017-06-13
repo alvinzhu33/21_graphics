@@ -1,32 +1,47 @@
+frames 100
+basename robot
+//set spin .1
 //BODY
-frames 50
-basename simple
 push
 move 250 250 0
-rotate y 360 spinny
-rotate y -30
+rotate y 360 spin
 box -100 125 50 200 250 100
+//HEAD
+push
+move 0 175 0
+rotate y 90
+sphere white 0 0 0 50
+pop
 //LEFT ARM
 push
 move -100 125 0
 rotate x -45
-box -40 0 40 40 100 80
+box white -40 0 40 40 100 80
 //LEFT LOWER ARM
 push
 move -20 -100 0
-box -10 0 10 20 125 20
+box white -10 0 10 20 125 20
 pop
 pop
 //RIGHT ARM
 push
 move 100 125 0
 rotate x -45
-box 0 0 40 40 100 80
+box white 0 0 40 40 100 80
 //RIGHT LOWER ARM
 push
 move 20 -100 0
 rotate x -20
-box -10 0 10 20 125 20
+box white -10 0 10 20 125 20
 pop
 pop
-vary spinny 0 49 0 1
+//LEFT LEG
+push
+move -100 -125 0
+box white 0 0 40 50 120 80
+pop
+//RIGHT LEG
+push
+move 100 -125 0
+box white -50 0 40 50 120 80
+vary spin 0 99 0 1
